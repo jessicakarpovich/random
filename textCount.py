@@ -8,24 +8,43 @@ class Word:
         return (self.word)
 
 
+"""sort the words based on number of appearances"""
+def bubbleSort(array):
+    length = len(array)
 
+    for i in range(length):
+        for j in range(0, length-i-1): 
+            if array[j].repeats > array[j+1].repeats:
+                array[j], array[j+1] = array[j+1], array[j]
+
+def calcPercent(array, count):
+    percent = 0
+    
+    for word in array:
+        percent = (word.repeats/count) * 100
+        print(word.word + ":\t " + str(word.repeats) + " -\t " + str(percent))
+
+#imports               
 import string
 import os
 
-# make path specifiable, don't hardcode it !!!!!!!
-#path = '/Users/jessicakarpovich/Desktop/text.txt'
-
+# make path specifiable, don't hardcode it!
+# get path to the scripts
 script_dir = os.path.dirname(__file__)
-rel_path = "text.txt"
+# save user entered file name
+rel_path = input("Enter the name of the file: ")
+# join the paths
 path = os.path.join(script_dir, rel_path)
-
-wordArray = []
-
+#open the file
 text_file = open(path, 'r')
 
+#Variables
+wordArray = []
 temp = str.maketrans('', '', string.punctuation)
+wordCount = 0
 
 "read in the text file"
+print("Reading the file and counting matches...")
 for line in text_file:
     # ignore empty lines
     if line == "\n":
@@ -42,8 +61,11 @@ for line in text_file:
 
     # for each word, check if there is a match
     for word in lineArray:
+        word = word.translate(temp)
         match = False
-
+        
+        # Add to total word count
+        wordCount += 1
         
         for i, w in enumerate(wordArray, start=0):
             if word == w.word:
@@ -52,14 +74,12 @@ for line in text_file:
                 break
         if match == False:
             wordArray.append(Word(word, 1))
-
-"""sort the words based on number of appearances"""
-for num in range(len(wordArray)-1, 0, -1):
-    for i in range(num):
-        if wordArray[i+1].repeats > wordArray[i].repeats:
-            temp = wordArray[i]
-            wordArray[i] = wordArray[i+1]
-            wordArray[i+1] = temp
-
-print(wordArray)
+            
 text_file.close()
+
+print("Sorting...")
+print("Total word count: " + str(wordCount))
+
+#Sort the array
+bubbleSort(wordArray)
+calcPercent(wordArray, wordCount)
